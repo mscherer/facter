@@ -14,7 +14,8 @@
 Facter.add(:hostname, :ldapname => "cn") do
     setcode do
         hostname = nil
-        name = Facter::Util::Resolution.exec('hostname') or nil
+        require "socket"
+        name = Socket.gethostname or nil
         if name
             if name =~ /^([\w-]+)\.(.+)$/
                 hostname = $1
