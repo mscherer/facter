@@ -82,9 +82,11 @@ Facter.add("virtual") do
             end
 
             if FileTest.exists?("/proc/xen/capabilities")
-                txt = Facter::Util::Resolution.exec("cat /proc/xen/capabilities")
-                if txt =~ /control_d/i
-                    result = "xen0"
+                File::open("/proc/xen/capabilities", "r") do |f|
+                    txt = f.readline.chomp
+                    if txt =~ /control_d/i
+                        result = "xen0"
+                    end
                 end
             end
         end

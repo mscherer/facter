@@ -44,17 +44,23 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Debian}
     setcode do
-        release = Facter::Util::Resolution.exec('cat /etc/debian_version')
+        File::open("/etc/debian_version", "r") do |f|
+            f.readline.chomp
+        end
     end
 end
 
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Ubuntu}
     setcode do
-        release = Facter::Util::Resolution.exec('cat /etc/issue')
-        if release =~ /Ubuntu (\d+.\d+)/
-            $1
+        result = "unknow"
+        File::open("/etc/issue", "r") do |f|
+            release = f.readline.chomp
+            if release =~ /Ubuntu (\d+.\d+)/
+                result = $1
+            end
         end
+        result
     end
 end
 
@@ -81,9 +87,11 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Slackware}
     setcode do
-        release = Facter::Util::Resolution.exec('cat /etc/slackware-version')
-        if release =~ /Slackware ([0-9.]+)/
-            $1
+        File::open("/etc/slackware-version", "r") do |f|
+            release = f.readline.chomp
+            if release =~ /Slackware ([0-9.]+)/
+                $1
+            end
         end
     end
 end
@@ -91,11 +99,13 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Bluewhite64}
     setcode do
-        releasefile = Facter::Util::Resolution.exec('cat /etc/bluewhite64-version')
-        if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
-            $1 + "." + $2
-        else
-            "unknown"
+        File::open("/etc/bluewhite64-version", "r") do |f|
+            release = f.readline.chomp
+            if release =~ /^\s*\w+\s+(\d+)\.(\d+)/
+                $1 + "." + $2
+            else
+                "unknown"
+            end
         end
     end
 end
@@ -113,11 +123,13 @@ end
 Facter.add(:operatingsystemrelease) do
     confine :operatingsystem => %w{Slamd64}
     setcode do
-        releasefile = Facter::Util::Resolution.exec('cat /etc/slamd64-version')
-        if releasefile =~ /^\s*\w+\s+(\d+)\.(\d+)/
-            $1 + "." + $2
-        else
-            "unknown"
+        File::open("/etc/slamd64-version", "r") do |f|
+            release = f.readline.chomp
+            if release =~ /^\s*\w+\s+(\d+)\.(\d+)/
+                $1 + "." + $2
+            else
+                "unknown"
+            end
         end
     end
 end
